@@ -1,14 +1,31 @@
-from ip_loads import ip_loads
-from report import gen_data_for_report
-import json
+from pathlib import Path
+
+from cmdargs import get_cmdargs
+from ip_loads import loads_ip, loads_json
+from report import gen_report
 
 
 def main():
-    data = ip_loads("geoip2.mmdb/GeoLite2-ASN.mmdb", "geoip2.mmdb/GeoLite2-Country.mmdb", "ip.txt")
+    cmd_args = get_cmdargs()
+    processed_ip = {}
+    ip_file_path = cmd_args.get("ip_file_path")
+    # Если параметр --file был передан, обработать файл с ip адресами.
+    if ip_file_path:
+        processed_ip = loads_ip("geoip2.mmdb/GeoLite2-ASN.mmdb", "geoip2.mmdb/GeoLite2-Country.mmdb", ip_file_path)
+    # Если нет, то в качестве данных использовать .json файл, сформированный при предыдущей обработке
+    else:
+        if Path("dump.json").exists():
+            processed_ip = loads_json("dump.json")
+    if cmd_args.get("servers"):
+        # Тут сформировать команды для firewalld и выполнить их
+        pass
+    else:
+        print("Команды для firewalld не были переданы...")
 
-
-
-    gen_data_for_report(data)
+    if cmd_args.get("report") and processed_ip:
+        gen_report(processed_ip, report_file_path="report.txt")
+    else:
+        print("Отчёт не был сформирован...")
 
 
 if __name__ == '__main__':
