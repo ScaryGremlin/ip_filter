@@ -19,9 +19,9 @@ def get_flat_list(sequence: list) -> list:
 
 def get_ips_for_ban(processed_ip: dict, limit_of_requests: int) -> list:
     """
-    Получить список ip-адресов для бана, у которых количество запросов больше значения limit_of_requests
+    Получить список ip-адресов для блокировки, у которых количество запросов больше значения limit_of_requests
     :param processed_ip: Словарь с данными, полученными при обработке входящего файла с ip-адресами
-    :param limit_of_requests: Лимит запросов.
+    :param limit_of_requests: Лимит запросов
     :return: Список ip-алресов, которые необходимо заблокировать
     """
     ips_for_ban = []
@@ -37,7 +37,7 @@ def main():
     processed_ip = {}
     ip_file_path = cmd_args.get("ip_file_path")
     ip_servers = get_flat_list(cmd_args.get("ip_servers"))
-    limit_of_requests = 2000    # Лимит запросов для бана ip-адреса
+    limit_of_requests = 2000    # Лимит запросов для блокировки ip-адреса
 
     # Если параметр -f был передан, обработать файл с ip-адресами.
     if ip_file_path:
@@ -50,7 +50,7 @@ def main():
 
     # Если параметр -s со списком серверов был передан и есть данные для обработки
     if ip_servers and processed_ip:
-        # Получить список ip-адресов, которые необходимо забанить
+        # Получить список ip-адресов, которые необходимо заблокировать
         ips_for_ban = get_ips_for_ban(processed_ip, limit_of_requests)
         # Передать список ip-адресов для формирования xml-файла зоны firewalld
         gen_zone_xml(ips_for_ban)

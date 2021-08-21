@@ -4,7 +4,8 @@ from paramiko import SSHClient, AutoAddPolicy
 
 def gen_zone_xml(list_of_source_addresses: list):
     """
-    Сгенерировать xml-файл зоны firewalld блокировки активных ip-адресов
+    Сгенерировать xml-файл зоны firewalld блокировки активных ip-адресов.
+    Название зоны - ip-filter.
     :param list_of_source_addresses: Список ip-адресов, которые нужно заблокировать
     """
     root_xml = etree.Element("zone")

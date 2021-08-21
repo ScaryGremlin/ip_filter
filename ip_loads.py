@@ -7,11 +7,11 @@ from tqdm import tqdm
 
 def loads_ip(geo_asn_path: str, geo_country_path: str, ip_file_path: str) -> dict:
     """
-    Загрузить ip адреса из файла для последующей обработки
+    Загрузить ip-адреса из файла для последующей обработки
     :param geo_asn_path: Путь к файлу с базой данных GeoLite2-ASN
     :param geo_country_path: Путь к файлу с базой данных GeoLite2-Country
-    :param ip_file_path: Путь к файлу с ip адресами
-    :return: Словарь обработанных ip адресов с частотой вхождения каждого ip вида:
+    :param ip_file_path: Путь к файлу с ip-адресами
+    :return: Словарь обработанных ip-адресов с частотой вхождения каждого ip вида:
         {
             "'85.192.10.0/23' 'LLC Digital Network' 'Russia'":
             {
@@ -53,9 +53,9 @@ def loads_json(json_file_path: str) -> dict:
 
 def is_valid_ip(ip_addr: str) -> bool:
     """
-    Проверить на валидность ip адрес
-    :param ip_addr: ip адрес
-    :return: Является ли ip адрес валидным
+    Проверить на валидность ip-адрес
+    :param ip_addr: ip-адрес
+    :return: Является ли ip-адрес валидным
     """
     ip_pattern = r"(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}"
     if search(ip_pattern, ip_addr):
