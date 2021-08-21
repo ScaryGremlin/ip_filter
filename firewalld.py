@@ -1,8 +1,6 @@
 from lxml import etree
 from paramiko import SSHClient, AutoAddPolicy
 
-import creds
-
 
 def gen_zone_xml(list_of_source_addresses: list):
     """
@@ -23,17 +21,20 @@ def gen_zone_xml(list_of_source_addresses: list):
         xml_file.write(etree.tostring(root_xml, pretty_print=True, xml_declaration=True, encoding="utf-8"))
 
 
-def add_firewalld_zone_file(local_filename: str):
+def add_firewalld_zone_file(local_filename: str, ssh_host: str, ssh_port: int) -> tuple:
     """
-    
-    :param local_filename:
-    :return:
+    Добавить в зону ip-filter блокируемые ip-адреса
+    :param ssh_host: ip-адрес ssh-сервера
+    :param ssh_port: Порт ssh-сервера
+    :param local_filename: xml-файл с настройками зоны
+    :return: Кортеж с результатом выполнения команды "firewall-cmd --reload" по ssh
     """
     with SSHClient() as ssh_client:
         ssh_client.set_missing_host_key_policy(AutoAddPolicy)
-        ssh_client.connect(creds.SSH_HOST, creds.SSH_PORT, creds.SSH_USERNAME)
+        ssh_client.connect(ssh_host, ssh_port, "root")
         sftp_client = ssh_client.open_sftp()
-        remote_filename = "/home/member/ip-filter.xml"
+        remote_filename = "/etc/firewalld/zones/ip-filter.xml"
         sftp_client.put(local_filename, remote_filename)
         # Применить настройки firewalld
-        ssh_client.exec_command("firewall-cmd --reload")
+        _, stdout, stderr = ssh_client.exec_command("firewall-cmd --reload")
+        return stdout.read().decode("utf-8"), stderr.read().decode("utf-8")
