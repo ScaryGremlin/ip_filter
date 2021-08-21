@@ -5,12 +5,12 @@ from tqdm import tqdm
 from cmdargs import get_cmdargs
 from firewalld import gen_zone_xml, add_firewalld_zone_file
 from ip_loads import loads_ip, loads_json
-from report import gen_report
+from report import gen_report_into_file, gen_report_on_xpaste
 
 
 def get_flat_list(sequence: list) -> list:
     """
-    Получить одномерный список
+    Получить одномерный список из списка списков
     :param sequence: Исходный список, который нужно преобразовать к одномерному
     :return: Одномерный список
     """
@@ -36,7 +36,7 @@ def main():
     cmd_args = get_cmdargs()
     processed_ip = {}
     ip_file_path = cmd_args.get("ip_file_path")
-    ip_servers = get_flat_list(cmd_args.get("ip_servers"))
+    ip_servers = cmd_args.get("ip_servers")
     limit_of_requests = 2000    # Лимит запросов для блокировки ip-адреса
 
     # Если параметр -f был передан, обработать файл с ip-адресами.
@@ -55,14 +55,14 @@ def main():
         # Передать список ip-адресов для формирования xml-файла зоны firewalld
         gen_zone_xml(ips_for_ban)
         # Обойти сервера и скопировать на них xml-файл зоны firewalld
-        for ip_srv in tqdm(ip_servers, desc="Добавление зон на сервера...", unit=" сервер", ncols=100):
+        for ip_srv in tqdm(get_flat_list(ip_servers), desc="Добавление зон на сервера...", unit=" сервер", ncols=100):
             print(add_firewalld_zone_file(local_filename="ip-filter.xml", ssh_host=ip_srv, ssh_port=22))
     else:
         print("Команды для firewalld не были переданы...")
 
-    # Если передан параметр -r
+    # Если передан параметр -r и есть данные для отчёта
     if cmd_args.get("report") and processed_ip:
-        gen_report(processed_ip, report_file_path="report.txt")
+        pass
     else:
         print("Отчёт не был сформирован...")
 
