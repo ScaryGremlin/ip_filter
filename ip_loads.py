@@ -2,6 +2,7 @@ from json import dump, load
 from re import search
 
 from geoip2 import database
+from geoip2.errors import AddressNotFoundError
 from tqdm import tqdm
 
 
@@ -30,10 +31,15 @@ def loads_ip(geo_asn_path: str, geo_country_path: str, ip_file_path: str) -> dic
                     # Удалить в конце строки символ \n
                     ip_address = raw_ip_address.strip()
                     if is_valid_ip(ip_address):
-                        subnet = str(geo_asn_reader.asn(ip_address).network)
-                        organization = str(geo_asn_reader.asn(ip_address).autonomous_system_organization)
-                        country = str(geo_country_reader.country(ip_address).country.name)
-                        info = f"'{subnet}' '{organization}' '{country}'"
+                        # Обработка ошибки отсутствия ip-адреса в базе данных
+                        try:
+                            subnet = str(geo_asn_reader.asn(ip_address).network)
+                            organization = str(geo_asn_reader.asn(ip_address).autonomous_system_organization)
+                            country = str(geo_country_reader.country(ip_address).country.name)
+                        except AddressNotFoundError:
+                            info = f"{ip_address} address not found in database"
+                        else:
+                            info = f"'{subnet}' '{organization}' '{country}'"
                         result.setdefault(info, {}).update({ip_address: result.get(info).setdefault(ip_address, 0) + 1})
     # Записать результат в файл для последующей обработки, без обработки файла со списком ip.
     with open("dump.json", "w") as json_file:

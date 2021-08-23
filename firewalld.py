@@ -21,7 +21,7 @@ def gen_zone_xml(list_of_source_addresses: list):
         source_address.set("address", ip)
     # Добавить в xml-файл блокируемые сервисы
     for service in list_of_blocked_services:
-        service_name = etree.ElementTree(root_xml, "service")
+        service_name = etree.SubElement(root_xml, "service")
         service_name.set("name", service)
     # Сохранить файл локально
     with open("ip-filter.xml", "wb") as xml_file:
@@ -44,4 +44,4 @@ def add_firewalld_zone_file(local_filename: str, ssh_host: str, ssh_port: int) -
         sftp_client.put(local_filename, remote_filename)
         # Применить настройки firewalld
         _, stdout, stderr = ssh_client.exec_command("firewall-cmd --reload")
-        return stdout.read().decode("utf-8"), stderr.read().decode("utf-8")
+        return stdout.read().decode("utf-8").strip(), stderr.read().decode("utf-8").strip()

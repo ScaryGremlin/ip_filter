@@ -57,8 +57,10 @@ def main():
         gen_zone_xml(ips_for_ban)
         # Обойти сервера и скопировать на них xml-файл зоны firewalld
         print("Подключаемся к серверам...")
-        for ip_srv in tqdm(get_flat_list(ip_servers), desc="Добавление зон на сервера...", unit=" сервер", ncols=100):
-            print(add_firewalld_zone_file(local_filename="ip-filter.xml", ssh_host=ip_srv, ssh_port=22))
+        for ip_srv in get_flat_list(ip_servers):
+            stdout, stderr = add_firewalld_zone_file(local_filename="ip-filter.xml", ssh_host=ip_srv, ssh_port=22)
+            print(f"result: {stdout}")
+            print(f"errors: {stderr}")
     else:
         print("Команды для firewalld не были переданы...")
 
