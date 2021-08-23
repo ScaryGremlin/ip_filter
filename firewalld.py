@@ -30,7 +30,7 @@ def gen_zone_xml(list_of_source_addresses: list):
 
 def add_firewalld_zone_file(local_filename: str, ssh_host: str, ssh_port: int) -> tuple:
     """
-    Добавить в зону ip-filter блокируемые ip-адреса
+    Скопировать xml-файл зоны firewalld на целевой сервер и перезагрузить конфигурацию firewalld
     :param ssh_host: ip-адрес ssh-сервера
     :param ssh_port: Порт ssh-сервера
     :param local_filename: xml-файл с настройками зоны
