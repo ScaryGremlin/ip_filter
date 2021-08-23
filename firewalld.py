@@ -8,15 +8,21 @@ def gen_zone_xml(list_of_source_addresses: list):
     Название зоны - ip-filter.
     :param list_of_source_addresses: Список ip-адресов, которые нужно заблокировать
     """
+    list_of_blocked_services = ["http", "https"]
     root_xml = etree.Element("zone")
     root_xml.set("target", "DROP")
     zone_short_name = etree.SubElement(root_xml, "short")
-    description = etree.SubElement(root_xml, "description")
+    description_zone = etree.SubElement(root_xml, "description")
     zone_short_name.text = "ip-filter"
-    description.text = "Zone for app ip-filter"
+    description_zone.text = "Zone for app ip-filter"
+    # Добавить в xml-файл блокируемые ip-адреса
     for ip in list_of_source_addresses:
         source_address = etree.SubElement(root_xml, "source")
         source_address.set("address", ip)
+    # Добавить в xml-файл блокируемые сервисы
+    for service in list_of_blocked_services:
+        service_name = etree.ElementTree(root_xml, "service")
+        service_name.set("name", service)
     # Сохранить файл локально
     with open("ip-filter.xml", "wb") as xml_file:
         xml_file.write(etree.tostring(root_xml, pretty_print=True, xml_declaration=True, encoding="utf-8"))

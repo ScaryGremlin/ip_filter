@@ -56,6 +56,7 @@ def main():
         # Передать список ip-адресов для формирования xml-файла зоны firewalld
         gen_zone_xml(ips_for_ban)
         # Обойти сервера и скопировать на них xml-файл зоны firewalld
+        print("Подключаемся к серверам...")
         for ip_srv in tqdm(get_flat_list(ip_servers), desc="Добавление зон на сервера...", unit=" сервер", ncols=100):
             print(add_firewalld_zone_file(local_filename="ip-filter.xml", ssh_host=ip_srv, ssh_port=22))
     else:
@@ -65,9 +66,11 @@ def main():
     if report_type and processed_ip:
         if report_type == "xpaste":
             # Распечатать ссылки на заметки xpaste
+            print("Генерируем отчёт на xpaste...")
             for link in gen_report_on_xpaste(processed_ip):
                 print(link)
         if report_type == "file":
+            print("Генерирует отчёт в файл...")
             gen_report_into_file(processed_ip, "report.txt")
     else:
         print("Отчёт не был сформирован...")
