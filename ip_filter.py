@@ -69,9 +69,11 @@ def main():
             print("Генерируем отчёт на xpaste...")
             for link in gen_report_on_xpaste(processed_ip):
                 print(link)
-        if report_type == "file":
+        elif report_type == "file":
             print("Генерирует отчёт в файл...")
             gen_report_into_file(processed_ip, "report.txt")
+        else:
+            print("Отчёт не был сформирован...")
     else:
         print("Отчёт не был сформирован...")
 
