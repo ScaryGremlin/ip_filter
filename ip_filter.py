@@ -37,6 +37,7 @@ def main():
     processed_ip = {}
     ip_file_path = cmd_args.get("ip_file_path")
     ip_servers = cmd_args.get("ip_servers")
+    report_type = cmd_args.get("report")
     limit_of_requests = 2000    # Лимит запросов для блокировки ip-адреса
 
     # Если параметр -f был передан, обработать файл с ip-адресами.
@@ -61,8 +62,13 @@ def main():
         print("Команды для firewalld не были переданы...")
 
     # Если передан параметр -r и есть данные для отчёта
-    if cmd_args.get("report") and processed_ip:
-        pass
+    if report_type and processed_ip:
+        if report_type == "xpaste":
+            # Распечатать ссылки на заметки xpaste
+            for link in gen_report_on_xpaste(processed_ip):
+                print(link)
+        if report_type == "file":
+            gen_report_into_file(processed_ip, "report.txt")
     else:
         print("Отчёт не был сформирован...")
 

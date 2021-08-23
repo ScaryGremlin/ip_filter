@@ -16,7 +16,9 @@ def get_cmdargs() -> dict:
                                  help="ip-адрес сервера, на котором забанить "
                                       "ip с чрезмерной активностью. "
                                       "Можно передать несколько адресов.")
-    argument_parser.add_argument("-r", dest="report", help="выгрузить статистику в текстовом виде", action="store_true")
+    argument_parser.add_argument("-r", dest="report",
+                                 help="выгрузить статистику в текстовом виде. "
+                                      "file - в файл, xpaste - на сервис xpaste.pro")
     args = argument_parser.parse_args()
     return {
         "ip_file_path": args.ip_file_path,
